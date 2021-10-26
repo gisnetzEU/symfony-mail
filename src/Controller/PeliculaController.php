@@ -10,10 +10,21 @@ use App\Entity\Pelicula;
 class PeliculaController extends AbstractController
 {
     /**
-     * @Route("/pelicula", name="pelicula")
+     * @Route("/peliculas", name="pelicula_list")
      */
-         
+             
     public function index():Response
+    {
+        //recuperamos las pelis haciendo uso del repositorio PeliculaRepository,
+        //haciendo uso del método findAll()
+        $pelis = $this->getDoctrine()->getRepository(Pelicula::class)->findall();
+        
+        //cargamos la vista con el listado de películas y le pasamos las pelis recuperadas
+        return $this->render("pelicula/list.html.twig", ["peliculas" => $pelis]);
+        
+    }
+    /*
+     public function index():Response
     {
         //recuperar las pelis
         //el método findAll retorna un array de objetos Pelicula
@@ -23,6 +34,7 @@ class PeliculaController extends AbstractController
         return new Response("Lista de pelis.<br>".implode("<br>",$pelis));
         
     }
+    */
     
     /**
      * @Route("/pelicula/store", name="pelicula_store")
