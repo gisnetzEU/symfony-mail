@@ -25,11 +25,11 @@
           <img height="25" width="25" src="{{ asset('images/buttons/show.png') }}"
             alt="Ver detalles" title="Ver detalles"></a>
         <a href="/pelicula/edit/{{peli.id}}">
-          <img src="/images/buttons/update.png"
-            alt="Modificar" title="Modificar" height="20" width="20"></a>
-        <a href="/pelicula/delete/{{peli.id}}">
-          <img height="20" width="20" src="/images/buttons/show.png"
-            alt="Borrar" title="Borrar"</a>
+          <img src="{{ asset('images/buttons/update.png') }}"
+            alt="Modificar" title="Modificar" height="20" width="20"></a>        
+         <a href="/pelicula/delete/{{peli.id}}">
+          <img height="25" width="25" src="{{ asset('images/buttons/delete.png') }}"
+            alt="Borrar" title="Borrar"></a>
       </td>
     </tr>
     {% endfor %}

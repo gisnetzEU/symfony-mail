@@ -1,22 +1,31 @@
 {% extends 'base.html.twig' %}
-{% block title %}Portada{% endblock %}
+{% block title %}
+  Portada
+{% endblock %}
 
 {% block main %}
   {{ parent() }}
-  <p>Esta es la portada del sitio web <b>Fymfofilms</b>.</p>
-  
+  <p>
+    Esta es la portada del sitio web <b>Fymfofilms</b>.
+  </p>
+
   <div class="d-flex">
     <figure class="m-2">
-      <img class="img-fluid" alt="Akira" src="/images/template/akira.jpg">
+      <img class="img-fluid"
+        alt="Akira"
+        src="{{ asset('images/template/akira.jpg') }}" />
     </figure>
-    
+
     <figure class="m-2">
-      <img class="img-fluid" alt="Terminator 2" src="/images/template/terminator2.jpg">
+      <img class="img-fluid"
+        alt="Terminator 2"
+        src="{{ asset('images/template/terminator2.jpg') }}" />
     </figure>
-    
-    
+
     <figure class="m-2">
-      <img class="img-fluid" alt="Mejor imposible" src="/images/template/mejor.jpg">
+      <img class="img-fluid"
+        alt="Mejor imposible"
+        src="{{ asset('images/template/mejor.jpg') }}" />
     </figure>
   </div>
 {% endblock %}
