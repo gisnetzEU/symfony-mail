@@ -53,13 +53,19 @@ class PeliculaController extends AbstractController
     }
     
     /**
-     * @Route("/pelicula/{id}", name="pelicula_show")
+     * @Route("/pelicula/{id<\d+>}", name="pelicula_show")
      */
     
     public function show(Pelicula $peli):Response{
         //retorna la respuesta (normalmente será una vista)
-        return new Response("Información de la película: $peli");        
+        return $this->render("pelicula/show.html.twig", ["pelicula"=>$peli]);
     }
+    
+    /*("/pelicula/{id}", name="pelicula_show")
+     * public function show(Pelicula $peli):Response{
+        //retorna la respuesta (normalmente será una vista)
+        return new Response("Información de la película: $peli");        
+    }*/
     
    /* public function show($id):Response{
         //recuperar la peli
