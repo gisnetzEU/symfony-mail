@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 
 use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\Pelicula;
@@ -141,6 +142,9 @@ class PeliculaController extends AbstractController
             ])
             ->add('director', TextType::class)
             ->add('genero', TextType::class)
+            ->add('sinopsis', TextareaType::class)
+            ->add('estreno', NumberType::class)
+            ->add('valoracion', NumberType::class)
             ->add('Guardar', SubmitType::class, [
                 'attr' => ['class' => 'btn btn-success my-3'],
             ])
