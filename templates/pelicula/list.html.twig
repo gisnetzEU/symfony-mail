@@ -26,6 +26,9 @@
         Género
       </th>
       <th>
+        Valoración
+      </th>
+      <th>
         Operaciones
       </th>
     </tr>
@@ -45,6 +48,25 @@
         </td>
         <td>
           {{ peli.genero }}
+        </td>
+        <td>
+          {% if peli.valoracion != null %}
+            {% for i in 1..5 %}
+              {% if i <= peli.valoracion %}
+                <img src="{{ asset('images/samples/estrellaon.gif') }}"
+                  alt="{{ peli.valoracion }}/5"
+                  title="{{ peli.valoracion }}/5"
+                  style="height:25px; width:25px;" />
+              {% else %}
+                <img src="{{ asset('images/samples/estrellaoff.gif') }}"
+                  alt="{{ peli.valoracion }}/5"
+                  title="{{ peli.valoracion }}/5"
+                  style="height:25px; width:25px;" />
+              {% endif %}
+            {% endfor %}
+          {% else %}
+            Sin valorar
+          {% endif %}
         </td>
         <td class="text-center">
           <a href="{{

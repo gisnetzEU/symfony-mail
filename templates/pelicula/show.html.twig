@@ -30,15 +30,29 @@
       <b>Género</b>: {{ pelicula.genero }}
     </p>
     <p>
-      <b>Sinopsis</b>: {{ pelicula.Sinopsis }}
-    </p>
-    <p>
       <b>Valoración</b>: {{ pelicula.valoracion }}
     </p>
     <p>
       <b>Género</b>: {{ pelicula.genero }}
     </p>
   </div>
+
+  {% if pelicula.sinopsis %}
+    <div class="border row align-items-center justify-content-center my-3 p-4">
+      <h2>
+        Sinopsis:
+      </h2>
+      {% autoescape 'html' %}
+        <p>
+          {{
+            pelicula.sinopsis|replace({
+              '\n': '<p></p>'
+            })
+          }}
+        </p>
+      {% endautoescape %}
+    </div>
+  {% endif %}
 
   <div class="text-center">
     <a href="{{ path('pelicula_list') }}">
