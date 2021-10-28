@@ -1,30 +1,71 @@
- {% extends 'base.html.twig' %}
- {% block title %}Detalles de {{ pelicula.titulo }}{% endblock %}
- {% block main %}
+{% extends 'base.html.twig' %}
+{% block title %}
+  Detalles de {{ pelicula.titulo }}
+{% endblock %}
+{% block main %}
   {{ parent() }}
-  
-  <h2>{{ pelicula.titulo }}</h2>
-  <p>Detalles de la pelicula {{ pelicula.titulo }},
-  de {{ pelicula.director }} en <b>SymfoFilms</b>.</p>
-  
+
+  <h2>
+    {{ pelicula.titulo }}
+  </h2>
+  <p>
+    Detalles de la pelicula {{ pelicula.titulo }}, de {{ pelicula.director }} en
+    <b>SymfoFilms</b>.
+  </p>
+
   <div class="border my-3 p-3">
-    <p><b>ID</b>: {{ pelicula.id }}</p>
-    <p><b>Titulo</b>: {{ pelicula.titulo }}</p>
-    <p><b>Duración</b>: {{ pelicula.duracion }}</p>
-    <p><b>Director</b>: {{ pelicula.director }}</p>
-    <p><b>Género</b>: {{ pelicula.genero }}</p>    
+    <p>
+      <b>ID</b>: {{ pelicula.id }}
+    </p>
+    <p>
+      <b>Titulo</b>: {{ pelicula.titulo }}
+    </p>
+    <p>
+      <b>Duración</b>: {{ pelicula.duracion }}
+    </p>
+    <p>
+      <b>Director</b>: {{ pelicula.director }}
+    </p>
+    <p>
+      <b>Género</b>: {{ pelicula.genero }}
+    </p>
   </div>
-  
+
   <div class="text-center">
-        <a href="{{ path('pelicula_list') }}">
-          <img height="40" width="40" src="{{ asset('images/buttons/show.png') }}"
-            alt="Lista" title="Volver al listado"></a>
-        <a href="{{ path('pelicula_edit', {'id':pelicula.id}) }}">
-          <img height="40" width="40" src="{{ asset('images/buttons/update.png') }}"
-            alt="Modificar" title="Modificar"></a>
-        <a href="{{ path('pelicula_delete', {'id':pelicula.id}) }}">
-          <img height="40" width="40" src="{{ asset('images/buttons/delete.png') }}"
-            alt="Borrar" title="Borrar"></a>
+    <a href="{{ path('pelicula_list') }}">
+      <img height="40"
+        width="40"
+        src="{{ asset('images/buttons/show.png') }}"
+        alt="Lista"
+        title="Volver al listado" />
+    </a>
+    <a href="{{
+      path(
+        'pelicula_edit',
+        {
+          id: pelicula.id
+        }
+      )
+      }}">
+      <img height="40"
+        width="40"
+        src="{{ asset('images/buttons/update.png') }}"
+        alt="Modificar"
+        title="Modificar" />
+    </a>
+    <a href="{{
+      path(
+        'pelicula_delete',
+        {
+          id: pelicula.id
+        }
+      )
+      }}">
+      <img height="40"
+        width="40"
+        src="{{ asset('images/buttons/delete.png') }}"
+        alt="Borrar"
+        title="Borrar" />
+    </a>
   </div>
-  
-  {% endblock %}
+{% endblock %}
