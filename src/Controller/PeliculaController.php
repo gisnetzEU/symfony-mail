@@ -3,9 +3,17 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+
 use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\Pelicula;
+use App\Form\PeliculaFormType;
+use App\Form\PeliculaDeleteFormType;
 
 class PeliculaController extends AbstractController
 {
@@ -23,19 +31,7 @@ class PeliculaController extends AbstractController
         return $this->render("pelicula/list.html.twig", ["peliculas" => $pelis]);
         
     }
-    /*
-     public function index():Response
-    {
-        //recuperar las pelis
-        //el método findAll retorna un array de objetos Pelicula
-        $pelis = $this->getDoctrine()->getRepository(Pelicula::class)->findall();
-        
-        //retorna la respuesta (normalmente será una vista)
-        return new Response("Lista de pelis.<br>".implode("<br>",$pelis));
-        
-    }
-    */
-    
+       
     /**
      * @Route("/pelicula/store", name="pelicula_store")
      */
@@ -61,24 +57,7 @@ class PeliculaController extends AbstractController
         return $this->render("pelicula/show.html.twig", ["pelicula"=>$peli]);
     }
     
-    /*("/pelicula/{id}", name="pelicula_show")
-     * public function show(Pelicula $peli):Response{
-        //retorna la respuesta (normalmente será una vista)
-        return new Response("Información de la película: $peli");        
-    }*/
-    
-   /* public function show($id):Response{
-        //recuperar la peli
-        $peli = $this->getDoctrine()->getRepository(Pelicula::class)->find($id);
-        
-        //sino existe la peli lanzamos una excepción
-        if(!$peli)
-            throw $this->createNotFoundException("No se encontró la peli $id");
-        
-        //retorna la respuesta(normalmente será una vista)
-        return new Response("Información de la película: $peli");   
-     }*/
-        
+            
         /**
          * @Route("/pelicula/search/{campo}/{valor}", name="pelicula_search")
          */
@@ -111,17 +90,7 @@ class PeliculaController extends AbstractController
             return $this->redirectToRoute('pelicula_show', ['id' => $id]);            
         }
         
-        /*public function update(Pelicula $peli):Response{
-            //retorna la respuesta (normalmente será una vista)
-            
-            $peli->setTitulo('Terminator II - Judgment Day'); //cambiamos el título
-            $entityManager->flush(); //aplicamos los cambios
-            
-            //rederigimos el método show
-            return $this->redirectToRoute('pelicula_show', ['id' => $id]);        
-                        
-        }*/
-        
+                
         /**
          * @Route("/pelicula/destroy/{id}")
          */
@@ -142,5 +111,109 @@ class PeliculaController extends AbstractController
                 return new Response("La pelicula <b>$peli</b> fue eliminada correctamente.");
                 
         }
+
+    /**
+     * @Route("/pelicula/create", name="pelicula_create")
+     */
+    public function create(Request $request):Response{           
+        $peli = new Pelicula();
+          
+        $formulario = $this->createFormBuilder($peli)
+            ->add('titulo', TextType::class)
+            ->add('duracion', NumberType::class,[
+                'empty_data' =>0,
+                'html5' =>true                     
+            ])->add('director', TextType::class)
+            ->add('genero', TextType::class)
+            ->add('Guardar', SubmitType::class,
+              ['attr' => ['class' => 'btn btn-sucess my-3']])
+            ->getForm();
+
+        $formulario->handleRequest($request);
         
+        //$formulario = $this->createForm(PeliculaFormType::class, $peli);
+      
+        
+
+        //si el formulario ha sido enviado y es valido
+        
+        if($formulario->isSubmitted() && $formulario->isValid()){
+
+            //almacenar los datos de la peli en la BDD
+            $entityManager =$this->getDoctrine()->getManager();
+            $entityManager->persist($peli);
+            $entityManager->flush();
+
+            //flashear el mensaje
+            $this->addFlash('success', 'Pelicula guardada con id '.$peli->getId());
+
+            return $this->redirectToRoute('pelicula_show', ['id' =>$peli->getID()]);
+        }
+        
+        //retornar la vista        
+        return $this->render('pelicula/create.html.twig',
+            ['formulario' => $formulario->createView()]);
+      }
+
+      /**
+         * @Route("/pelicula/edit/{id}", name="pelicula_edit")
+         */
+        
+        public function edit(Pelicula $peli, Request $request):Response{
+            //crea el formulario
+            $formulario = $this->createForm(PeliculaFormType::class, $peli);
+            $formulario->handleRequest($request);
+
+            //si el formulario fue enviado y es válido
+            if($formulario->isSubmitted() && $formulario->isValid()){
+                        
+                //guarda los cambios en la BDD
+                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager->flush(); //ejecuta las consultas
+            
+                //flashear el mensaje
+                $this->addFlash('success', 'Película actualizada correctamente');
+
+                //redirige a "ver detalles de la peli"
+                return $this->redirectToRoute('pelicula_show', ['id' => $peli->getId()]);
+
+            }  
+
+            //carga la vista con el formulario
+            return $this->render("pelicula/edit.html.twig", [
+                "formulario"=>$formulario->createView(),
+                "pelicula" =>$peli
+            ]);  
+        }
+        
+        /**
+         * @Route("/pelicula/delete/{id}", name="pelicula_delete")
+         */
+
+        public function delete(Pelicula $peli, Request $request):Response{
+            //crea el formulario
+            $formulario = $this->createForm(PeliculaDeleteFormType::class, $peli);
+            $formulario->handleRequest($request);
+
+            //si el formulario fue enviado y es válido
+            if($formulario->isSubmitted() && $formulario->isValid()){
+                        
+                //guarda los cambios en la BDD
+                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager->remove($peli);
+                $entityManager->flush(); //ejecuta las consultas
+            
+                //flashear el mensaje
+                $this->addFlash('success', 'Película eliminada correctamente');
+
+                //redirige a la lista de peliculas
+                return $this->redirectToRoute('pelicula_list');
+            }
+
+            //muestra el formulario de confirmación de borrado
+            return $this->render("pelicula/delete.html.twig", [
+                "formulario"=>$formulario->createView(),
+                "pelicula" =>$peli
+            ]);     
+    }
 }

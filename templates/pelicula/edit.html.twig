@@ -1,0 +1,9 @@
+ {% extends 'base.html.twig' %}
+ {% block title %}Edición de la película {{ pelicula.titulo }}{% endblock %}
+ {% block main %}
+  {{ parent() }}
+  <p>Edición de la película en <b> {{ pelicula.titulo }}</b>.</p>
+  
+  {{ form(formulario) }}
+
+  {% endblock %}
