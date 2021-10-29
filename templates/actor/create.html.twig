@@ -1,0 +1,9 @@
+ {% extends 'base.html.twig' %}
+ {% block title %}Nuevo actor{% endblock %}
+ {% block main %}
+  {{ parent() }}
+  <p>Crear un nuevo actor en <b>Symfony</b>.</p>
+
+  {{ form(formulario) }}
+
+  {% endblock %}

@@ -1,0 +1,85 @@
+{% extends 'base.html.twig' %}
+{% block title %}
+  Detalles de {{ actor.nom }}
+{% endblock %}
+{% block main %}
+  {{ parent() }}
+
+  <h2>
+    {{ actor.nom }}
+  </h2>
+  <p>
+    Detalles del actor {{ actor.nom }} en
+    <b>SymfoFilms</b>.
+  </p>
+
+  <div class="border my-3 p-3">
+    <p>
+      <b>ID</b>: {{ actor.id }}
+    </p>
+    <p>
+      <b>Nombre</b>: {{ actor.nom }}
+    </p>
+    <p>
+      <b>Fecha de nacimiento</b>: {{ actor.datadenaixement|date() }}
+    </p>
+    <p>
+      <b>Nacionalidad</b>: {{ actor.nacionalitat }}
+    </p>      
+  </div>
+
+  {% if actor.biografia %}
+    <div class="border row align-items-center justify-content-center my-3 p-4">
+      <h2>
+        Biografía:
+      </h2>
+      {% autoescape 'html' %}
+        <p>
+          {{
+            actor.biografia|replace({
+              '\n': '<p></p>'
+            })
+          }}
+        </p>
+      {% endautoescape %}
+    </div>
+  {% endif %}
+
+  <div class="text-center">
+    <a href="{{ path('actor_list') }}">
+      <img height="40"
+        width="40"
+        src="{{ asset('images/buttons/show.png') }}"
+        alt="Lista"
+        title="Volver al listado" />
+    </a>
+    <a href="{{
+      path(
+        'actor_edit',
+        {
+          id: actor.id
+        }
+      )
+      }}">
+      <img height="40"
+        width="40"
+        src="{{ asset('images/buttons/update.png') }}"
+        alt="Modificar"
+        title="Modificar" />
+    </a>
+    <a href="{{
+      path(
+        'actor_delete',
+        {
+          id: actor.id
+        }
+      )
+      }}">
+      <img height="40"
+        width="40"
+        src="{{ asset('images/buttons/delete.png') }}"
+        alt="Borrar"
+        title="Borrar" />
+    </a>
+  </div>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+{% block title %}
+  Edición del actor {{ actor.nom }}
+{% endblock %}
+{% block main %}
+  {{ parent() }}
+  <p>
+    Edición del actor <b>{{ actor.nom }}</b>.
+  </p>
+
+  {{ form(formulario) }}
+{% endblock %}
