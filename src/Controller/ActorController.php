@@ -57,7 +57,7 @@ class ActorController extends AbstractController
         $actuante = new Actor();
         $actuante->setNom('Julia');
         $actuante
-            ->setDatadenaixement(date('10/16/2003'))
+            ->setDatadenaixement(new \DateTime())
             ->setNacionalitat('estadounidense')
             ->setBiografia('Actriz estadounidense que se hizo famosa con la película Pretty Woman');
 
