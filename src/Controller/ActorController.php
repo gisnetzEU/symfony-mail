@@ -18,6 +18,8 @@ use App\Entity\Actor;
 use App\Form\ActorFormType;
 use App\Form\ActorDeleteFormType;
 
+use Psr\Log\LoggerInterface;
+
 class ActorController extends AbstractController
 {
    /* #[Route('/actor', name: 'actor')]
@@ -141,7 +143,7 @@ class ActorController extends AbstractController
     /**
      * @Route("/actor/create", name="actor_create")
      */
-    public function create(Request $request): Response
+    public function create(Request $request,  LoggerInterface $appInfoLogger): Response
     {
         $actuante = new Actor();
 
@@ -170,15 +172,24 @@ class ActorController extends AbstractController
             $entityManager->persist($actuante);
             $entityManager->flush();
 
+            //flashear y logear el mensaje
+            $mensaje = 'Actor '.$actuante->getNom().' guardada con id '.$actuante->getId();
+            $this->addFlash('success', $mensaje);
+            $appInfoLogger->info($mensaje);
+
+            //redirige a la vista de detalles
+            return $this->redirectToRoute('actor_show', ['id' => $actuante->getId()]);
+        
+
             //flashear el mensaje
-            $this->addFlash(
+            /* $this->addFlash(
                 'success',
                 'Actor guardada con id ' . $actuante->getId()
             );
 
             return $this->redirectToRoute('actor_show', [
                 'id' => $actuante->getID(),
-            ]);
+            ]); */
         }
 
         //retornar la vista
@@ -237,7 +248,7 @@ class ActorController extends AbstractController
             $entityManager->flush(); //ejecuta las consultas
 
             //flashear el mensaje
-            $this->addFlash('success', 'Película eliminada correctamente');
+            $this->addFlash('success', 'Actor eliminado correctamente');
 
             //redirige a la lista de actores
             return $this->redirectToRoute('actor_list');

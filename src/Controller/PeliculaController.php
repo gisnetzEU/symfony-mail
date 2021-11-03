@@ -16,6 +16,8 @@ use App\Entity\Pelicula;
 use App\Form\PeliculaFormType;
 use App\Form\PeliculaDeleteFormType;
 
+use Psr\Log\LoggerInterface;
+
 class PeliculaController extends AbstractController
 {
     /**
@@ -54,6 +56,57 @@ class PeliculaController extends AbstractController
         $entityManager->flush();
 
         return new Response('Pelicula guardada con id ' . $peli->getId());
+    }
+
+      /**
+     * @Route("/pelicula/create", name="pelicula_create")
+     */
+    public function create(Request $request, LoggerInterface $appInfoLogger): Response
+    {
+        $peli = new Pelicula();
+
+        $formulario = $this->createFormBuilder($peli)
+            ->add('titulo', TextType::class)
+            ->add('duracion', NumberType::class, [
+                'empty_data' => 0,
+                'html5' => true,
+            ])
+            ->add('director', TextType::class)
+            ->add('genero', TextType::class)
+            ->add('sinopsis', TextareaType::class)
+            ->add('estreno', NumberType::class)
+            ->add('valoracion', NumberType::class)
+            ->add('Guardar', SubmitType::class, [
+                'attr' => ['class' => 'btn btn-success my-3'],
+            ])
+            ->getForm();
+
+        $formulario->handleRequest($request);
+
+        //$formulario = $this->createForm(PeliculaFormType::class, $peli);
+
+        //si el formulario ha sido enviado y es valido
+
+        if ($formulario->isSubmitted() && $formulario->isValid()) {
+            //almacenar los datos de la peli en la BDD
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($peli);
+            $entityManager->flush();
+
+            //flashear el mensaje
+            //flashear y logear el mensaje
+            $mensaje = 'Película '.$peli->getTitulo().' guardada con id '.$peli->getId();
+            $this->addFlash('success', $mensaje);
+            $appInfoLogger->info($mensaje);
+
+            //redirige a la vista de detalles
+            return $this->redirectToRoute('pelicula_show', ['id' => $peli->getId()]);
+        }        
+
+        //retornar la vista
+        return $this->render('pelicula/create.html.twig', [
+            'formulario' => $formulario->createView(),
+        ]);
     }
 
     /**
@@ -127,57 +180,7 @@ class PeliculaController extends AbstractController
         );
     }
 
-    /**
-     * @Route("/pelicula/create", name="pelicula_create")
-     */
-    public function create(Request $request): Response
-    {
-        $peli = new Pelicula();
-
-        $formulario = $this->createFormBuilder($peli)
-            ->add('titulo', TextType::class)
-            ->add('duracion', NumberType::class, [
-                'empty_data' => 0,
-                'html5' => true,
-            ])
-            ->add('director', TextType::class)
-            ->add('genero', TextType::class)
-            ->add('sinopsis', TextareaType::class)
-            ->add('estreno', NumberType::class)
-            ->add('valoracion', NumberType::class)
-            ->add('Guardar', SubmitType::class, [
-                'attr' => ['class' => 'btn btn-success my-3'],
-            ])
-            ->getForm();
-
-        $formulario->handleRequest($request);
-
-        //$formulario = $this->createForm(PeliculaFormType::class, $peli);
-
-        //si el formulario ha sido enviado y es valido
-
-        if ($formulario->isSubmitted() && $formulario->isValid()) {
-            //almacenar los datos de la peli en la BDD
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($peli);
-            $entityManager->flush();
-
-            //flashear el mensaje
-            $this->addFlash(
-                'success',
-                'Pelicula guardada con id ' . $peli->getId()
-            );
-
-            return $this->redirectToRoute('pelicula_show', [
-                'id' => $peli->getID(),
-            ]);
-        }
-
-        //retornar la vista
-        return $this->render('pelicula/create.html.twig', [
-            'formulario' => $formulario->createView(),
-        ]);
-    }
+  
 
     /**
      * @Route("/pelicula/edit/{id}", name="pelicula_edit")

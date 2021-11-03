@@ -1,0 +1,10 @@
+monolog:
+    channels: ['app_info']
+
+    handlers:      
+        appinfo:
+            type: stream
+            path: "%kernel.logs_dir%/appinfo.log"
+            level: debug
+            channels: ["app_info"]
+            buffer_size: 500
