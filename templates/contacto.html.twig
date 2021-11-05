@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+{% block title %}
+  Contacto
+{% endblock %}
+
+{% block main %}
+  {{ parent() }}
+  <p>
+    Contacta con <b>Symfofilms</b>.
+  </p>
+
+  <div class="border row my-2 p-2">
+    <div class="col-8 p-2">
+      <h3>Contactar: </h3>
+      {{ form(formulario) }}
+    </div>
+    <div class="col-4 p-2 text-end">
+      <iframe src="">
+      </iframe>
+      <p><b>CIFO Barcelona la Violeta</b></p>
+      <p>Carrer del Comte de Sert, 7, 08035 Barcelona</p>
+    </div>
+</div>
+{% endblock %}

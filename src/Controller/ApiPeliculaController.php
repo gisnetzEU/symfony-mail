@@ -13,12 +13,17 @@ use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 
 use Symfony\Component\HttpFoundation\Cookie;
-
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\XmlResponse;
+use Symfony\Component\HttpFoundation\CsvResponse;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 use App\Entity\Pelicula;
+use App\Entity\Actor;
 use App\Kernel;
-use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+
 
 class ApiPeliculaController extends AbstractController{
 
@@ -153,5 +158,156 @@ class ApiPeliculaController extends AbstractController{
         return $response;
     } 
 
+    /* #[Route("/ejemplo")]
 
+    public function ejemplo():Response{
+        //crea el objeto Request
+        $request = Request::createFromGlobals();
+
+        //si llega el parámetro 'nombre' por el método GET
+        if($request->query->has('nombre'))
+          return new Response('El nombre indicado es: '.$request->query->get('nombre'));
+        
+        //sino..
+        else
+        return new Response('No se indicó el parámetro nombre.');
+    } */
+
+    /* #[Route("/ejemplo")]
+
+    public function ejemplo():Response{
+        //crea el objeto Request
+        $request = Request::createFromGlobals();
+
+        return new Response('El nombre indicado es: '.$request->query->get('nombre', 'anónimo'));
+    } */
+
+   /*  #[Route("/ejemplo")]
+
+    public function ejemplo(Request $request):Response{
+
+        //crea una petición simulada
+        $request = Request::create(
+            'holamundo',
+            'GET',
+            ['nombre' => 'Robert']
+        );
+
+        $request->overrideGlobals(); //reescribe las superglobales de PHP
+
+        $texto = 'El nombre es: '.$request->query->get('nombre');
+        $texto .= ' y si lo miramos en $_GET: '.$_GET['nombre'];
+
+        return new Response($texto);
+    } */
+
+    //Ejemplo que funciona con postman
+    #[Route("/ejemplo")]
+
+    public function ejemplo(Request $request):Response{
+
+    //convierte la información de JSON a array
+    $datos = $request->toArray();
+
+    //recupera alguno de los campos y lo muestra
+    return new Response('El nombre es '.$datos['nombre']);
+    }
+
+    #[Route("/api/pelicula/create")]
+
+    public function create(Request $request):Response{
+     //preparar el serializador
+     $serializer = new Serializer([new ObjectNormalizer()], [new JsonEncoder()]);
+
+     //recuperar los datos en JSON y pasarlos a la Película
+     $peli = $serializer->deserialize($request->getContent(), 'App\Entity\Pelicula','json');
+
+     //almacenar los datos de la peli en la BDD
+     $entityManager = $this->getDoctrine()->getManager();
+     $entityManager->persist($peli); //indica a doctrine que queremos guardar la peli
+     $entityManager->flush();  //ejecuta las consultas
+
+     //retornar una respuesta JSON
+     $respuesta = new \stdClass();
+     $respuesta->status = 'OK';
+
+     return new JsonResponse($respuesta);
+    }
+
+    /* #[Route("/api/pelicula/create/xml")]
+
+    public function create(Request $request):Response{
+     //preparar el serializador
+     $serializer = new Serializer([new ObjectNormalizer()], [new XmlEncoder()]);
+
+     //recuperar los datos en JSON y pasarlos a la Película
+     $peli = $serializer->deserialize($request->getContent(), 'App\Entity\Pelicula','xml');
+
+
+     //almacenar los datos de la peli en la BDD
+     $entityManager = $this->getDoctrine()->getManager();
+     $entityManager->persist($peli); //indica a doctrine que queremos guardar la peli
+     $entityManager->flush();  //ejecuta las consultas
+
+     //retornar una respuesta JSON
+     $respuesta = new \stdClass();
+     $respuesta->status = 'OK';
+
+     return new JsonResponse($respuesta);
+    } */
+
+    /* #[Route("/api/pelicula/create/csv")]
+
+    public function create(Request $request):Response{
+     //preparar el serializador
+     $serializer = new Serializer([new ObjectNormalizer()], [new CsvEncoder()]);
+
+     //recuperar los datos en JSON y pasarlos a la Película
+     $peli = $serializer->deserialize($request->getContent(), 'App\Entity\Pelicula','csv');
+
+     dd($peli);
+
+     //almacenar los datos de la peli en la BDD
+     $entityManager = $this->getDoctrine()->getManager();
+     $entityManager->persist($peli); //indica a doctrine que queremos guardar la peli
+     $entityManager->flush();  //ejecuta las consultas
+
+     //retornar una respuesta JSON
+     $respuesta = new \stdClass();
+     $respuesta->status = 'OK';
+
+     return new JsonResponse($respuesta);
+    } */
+
+
+    #[Route("/getcookie")]
+    
+    public function getcookie(Request $request):Response{
+
+        return $request->cookies->has('autor') ?
+          new Response("He recuperado: ".$request->cookies->get('autor')) :
+          new Response("No existe la cookie con nombre 'autor'.");
+    }
+
+    #[Route('/api/actor', name: 'actores_json')]
+    
+    public function actoresJson(): Response{
+
+        //recuperar los actores
+        $actores = $this->getDoctrine()->getRepository(Actor::class)->findAll();
+
+        //preparar el serializador
+        $serializer = new Serializer([new ObjectNormalizer()], [new JsonEncoder()]);
+
+        //normalizar y serializar la respuesta en JSON
+        $contenido = $serializer->serialize($actores, 'json');
+
+        //crear la respuesta y establecer el Content-Type
+        $response = new Response($contenido);
+        $response->headers->set('Content-Type', 'application/json');
+
+        //retorna la respuesta en JSON con los resultados
+        return $response;
+    }
+    
 }
