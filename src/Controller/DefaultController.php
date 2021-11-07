@@ -9,6 +9,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Mime\Email;
 
 use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use App\Form\ContactoFormType;
 
 class DefaultController extends AbstractController
@@ -50,10 +51,22 @@ class DefaultController extends AbstractController
           ->text($mensaje);
 
         //enviar el email
-        $mailer->send($email);
+        try {
+          $mailer->send($email);
 
-        //flashear mensaje y redirigir a la portada
-        $this->addFlash('success', 'Mensaje enviado correctamente');
+          //flashear mensaje y redirigir a la portada
+          $this->addFlash('success', 'Mensaje enviado correctamente');
+        } catch (TransportExceptionInterface $e) {
+          //flashear mensaje y redirigir a la portada
+          $this->addFlash('error', 'Ha habido un error');
+          echo("<pre>$e</pre>");
+
+          // some error prevented the email sending; display an
+          // error message or try to resend the message
+        }
+
+        
+        
         return $this->redirectToRoute('portada');
 
       }
